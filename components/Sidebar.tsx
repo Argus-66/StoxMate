@@ -20,9 +20,11 @@ export default function Sidebar() {
           <Link
             key={item.name}
             href={item.href}
-            className={`block px-3 py-2 rounded hover:bg-gray-700 ${
-              pathname === item.href ? "bg-gray-700" : ""
-            }`}
+            className={`block px-3 py-2 rounded transition-colors
+              ${pathname === item.href
+                ? "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white font-bold"
+                : "hover:bg-gray-700 hover:text-white text-gray-300"}
+            `}
           >
             {item.name}
           </Link>
