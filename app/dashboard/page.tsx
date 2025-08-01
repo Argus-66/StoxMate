@@ -1,11 +1,13 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import StockList from "@/components/StockList";
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
 
@@ -17,7 +19,7 @@ export default function Dashboard() {
   if (!user) return <p className="text-center mt-10">Loading...</p>;
 
   return (
-    <div className="p-8">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Welcome, {user.displayName}</h1>
         <button
@@ -28,8 +30,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Portfolio UI will go here */}
-      <p>Your dashboard is under construction 🚧</p>
+      <StockList />
     </div>
   );
 }
