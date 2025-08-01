@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import https from 'https';
 
-// Fetch cookies by visiting NSE homepage first
 async function getNSECookie(): Promise<string> {
   return new Promise((resolve, reject) => {
     https.get("https://www.nseindia.com", {
@@ -20,10 +19,9 @@ async function getNSECookie(): Promise<string> {
   });
 }
 
-// Fetch intraday data using proper headers & cookie
 async function fetchIntraday(symbol: string, cookie: string): Promise<any> {
   return new Promise((resolve, reject) => {
-    const path = `/api/chart-databyindex?index=${symbol}EQ`;
+    const path = `/api/quote-equity?symbol=${encodeURIComponent(symbol)}`;
 
     const options = {
       hostname: "www.nseindia.com",
@@ -44,7 +42,7 @@ async function fetchIntraday(symbol: string, cookie: string): Promise<any> {
         try {
           resolve(JSON.parse(data));
         } catch (err) {
-          reject("Invalid JSON: " + err);
+          reject("Invalid JSON: " + data);
         }
       });
     });
@@ -54,7 +52,6 @@ async function fetchIntraday(symbol: string, cookie: string): Promise<any> {
   });
 }
 
-// API Route: /api/intraday?symbol=RELIANCE
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const symbol = searchParams.get("symbol");
@@ -66,9 +63,12 @@ export async function GET(req: Request) {
   try {
     const cookie = await getNSECookie();
     const data = await fetchIntraday(symbol.toUpperCase(), cookie);
-    return NextResponse.json({ symbol, chartData: data });
+    return NextResponse.json({ symbol, data });
   } catch (error) {
     console.error("Fetch error:", error);
-    return NextResponse.json({ error: "Failed to fetch intraday data", details: error }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch intraday data", details: `${error}` },
+      { status: 500 }
+    );
   }
 }
